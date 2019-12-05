@@ -67,7 +67,7 @@ public class Polynom implements Polynom_able {
     	
     	Polynom_able p = p1.copy(); 
     	
-        Iterator<Monom> it = p.iterator();
+        Iterator<Monom> it = p.iteretor();
         while (it.hasNext())
         {
             Monom m = it.next();
@@ -106,7 +106,7 @@ public class Polynom implements Polynom_able {
     public void multiply(Polynom_able p1) 
     {    	
     	Polynom newp = new Polynom();        
-        Iterator<Monom> it1 = p1.iterator();                
+        Iterator<Monom> it1 = p1.iteretor();                
         while (it1.hasNext())
         {
             Monom m3 = it1.next();
@@ -120,14 +120,13 @@ public class Polynom implements Polynom_able {
         }
         
         this.polynomMonoms = new ArrayList<Monom>();
-        Iterator<Monom> it3 = newp.iterator();
+        Iterator<Monom> it3 = newp.iteretor();
         while (it3.hasNext())
             this.add(it3.next());
     }
 
     @Override
     public boolean equals(Polynom_able p1) {
-        // TODO Auto-generated method stub
         return (this.toString().compareTo(p1.toString()) == 0);
     }
 
@@ -169,7 +168,7 @@ public class Polynom implements Polynom_able {
     @Override
     public Polynom_able derivative() {
         Polynom p = new Polynom();
-        Iterator<Monom> it = this.iterator();
+        Iterator<Monom> it = this.iteretor();
         while (it.hasNext())
         {
             p.add(it.next().derivative());
@@ -193,7 +192,7 @@ public class Polynom implements Polynom_able {
     }
 
     @Override
-    public Iterator<Monom> iterator() 
+    public Iterator<Monom> iteretor() 
     {
         
         Iterator iter = polynomMonoms.iterator();

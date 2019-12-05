@@ -124,13 +124,28 @@ public class Monom implements function{
 		Monom m = new Monom (this.toString());
 			return m;
 	}
+	
+	public boolean equals(Object obj)
+	{
+		return (this.toString().compareTo(obj.toString()) == 0);
+	}
+	
 	public void add(Monom m)
-        {
-            if (m.get_power()==this.get_power())
-                this._coefficient+=m.get_coefficient();
-            else
-            	throw new RuntimeException("you can't add a monom with a different power");
-        }
+    {
+		if (this.isZero())
+		{
+			this.set_coefficient(m.get_coefficient());
+			this.set_power(m.get_power());
+		}
+		else
+		{
+	        if (m.get_power()==this.get_power())
+	            this._coefficient+=m.get_coefficient();
+	        else
+	        	throw new RuntimeException("you can't add a monom with a different power");
+		}
+        
+    }
 	
 	public void multiply(Monom m) 
         {
