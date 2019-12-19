@@ -65,12 +65,13 @@ public class Polynom implements Polynom_able {
     @Override
     public void add(Polynom_able p1) {
     	
-    	Polynom_able p = p1.copy(); 
+    	Polynom_able p = (Polynom_able)p1.copy(); 
     	
         Iterator<Monom> it = p.iteretor();
+        
         while (it.hasNext())
         {
-            Monom m = it.next();
+        	Monom m = it.next();
             this.add(new Monom(m));
         }
 
@@ -95,7 +96,7 @@ public class Polynom implements Polynom_able {
     @Override
     public void substract(Polynom_able p1) 
     {
-        Polynom_able p = p1.copy();
+        Polynom_able p = (Polynom_able)p1.copy();
         Monom m = new Monom(-1,0);
         p.multiply(m);
         
@@ -126,10 +127,32 @@ public class Polynom implements Polynom_able {
     }
 
     @Override
-    public boolean equals(Polynom_able p1) {
-        return (this.toString().compareTo(p1.toString()) == 0);
+  
+    public boolean equals(Object obj)
+    {
+    		
+    	if ((obj instanceof Polynom) || (obj instanceof Monom))	
+    	{
+    		return (this.toString().equals(obj.toString()));
+    	}
+    	else if (obj instanceof ComplexFunction)
+    	{
+    		ComplexFunction cf = (ComplexFunction) obj;
+    		double  i = -100;
+    		if  (this.toString().equals(cf.toString()))
+    			return true;
+    		while (i<100)
+    		{
+    			if (this.f(i) != cf.f(i))
+    				return false;
+    			i += 0.01; 
+    		}
+    		return true;
+    	}
+    	return false;	
+    			
     }
-
+      
     @Override
     public boolean isZero() {
         if (polynomMonoms.size() == 0)
@@ -146,14 +169,27 @@ public class Polynom implements Polynom_able {
     	
     	if (x1 < x0)
     		throw new RuntimeException("x1 must be bigger then x0");
-    	
-        double x2=x0;
+    	double t =0.0;
+        /*double x2=x0;
         while (x2<x1)
         {
-            if (Math.abs(this.f(x2))<eps)
+            if ((Math.abs(this.f(x2)))<eps)
                     return x2;
             x2+=eps;
+        }*/
+        
+        while (x0<x1)
+        {
+        	t = (x1+x0)/2.0;
+        	if ((Math.abs(this.f(t)))<eps)
+                return t;
+        	if (this.f(t)*this.f(x0) < 0)
+        		x1 = t;
+        	else
+        		x0 = t;  		
         }
+    
+    
         
         throw new RuntimeException("there is no root");
         
@@ -178,15 +214,18 @@ public class Polynom implements Polynom_able {
     }
 
     @Override
-    public double area(double x0, double x1, double eps) {
+    public double area(double x0, double x1, double eps)
+    {
     	if (x1 < x0)
     		throw new RuntimeException("x1 must be bigger then x0");
-    	
-        double area = 0;
+    	double f_x = 0;	
+        double area = 0.0;
         while(x0<x1) 
         {
-            area+=(this.f(x0))*eps;
-            x0+=eps;
+        	f_x = this.f(x0);
+        	if (f_x>0)       	
+        		area+=(f_x*eps);
+            x0+=eps;        	
         }
         return area;
     }
@@ -210,30 +249,49 @@ public class Polynom implements Polynom_able {
     @Override
     public String toString() 
     {
+    	String t ="";
     	if (polynomMonoms.size() == 0)
     		return "0";
     	
         Collections.sort(polynomMonoms, new Monom_Comperator());
-        Iterator<Monom> it = this.iterator();
+        Iterator<Monom> it = this.iteretor();
         while (it.hasNext())
         {
         	if (it.next().get_coefficient()==0.0)
         		it.remove();
         }
-
+        
+        if (polynomMonoms.size() == 0)
+        	return ("0");
+        
         String s = polynomMonoms.get(0).toString();
+
 
         for (int i = 1; i < polynomMonoms.size(); i++) 
         {
-            s += "+" + polynomMonoms.get(i).toString();
-            
+        	t = polynomMonoms.get(i).toString();
+        	if (t.charAt(0) == ' ')
+        		s += t;
+        	else if (t.charAt(0) == '-')
+        		s += t;
+        	else 
+        		s += "+" + t;       
         }
-       
-        s = s.replace("+-", "-");
+        //s = s.replace("+","-");
+        //s = s.replace("+ý", "-");
+        s = s.replace("+ý-", "-");  
         s = s.replace(".00", "");
+        s = s.replace("--", "-");
         return s;
 
     }
-   
+
+	@Override
+	public function initFromString(String s) 
+	{
+		Polynom p = new Polynom (s);
+		return p;
+	}
+	
 
 }

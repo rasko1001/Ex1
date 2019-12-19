@@ -92,9 +92,21 @@ public class Monom implements function{
 	            // find power
 	            pos = s.indexOf("^");
 	            if (pos != -1)
+	            {
+	    	        
+	    	        	
 	                power = Integer.parseInt(s.substring(pos + 1, s.length()));
+	            }
 	            else
-	                power = 1;
+	            {
+	            	if (s.indexOf("x")<s.length()-1)
+	    	        {
+	    	        	this.set_coefficient(0);
+	    		        this.set_power(0);
+	    				throw new RuntimeException("Invalid monom string format, monom has been initialized to zero");
+	    	        }
+	            	power = 1;
+	            }
 	            
 	        }
 	        else
@@ -127,7 +139,25 @@ public class Monom implements function{
 	
 	public boolean equals(Object obj)
 	{
-		return (this.toString().compareTo(obj.toString()) == 0);
+		
+		if ((obj instanceof Polynom) || (obj instanceof Monom))	
+			return (this.toString() == obj.toString());
+		else if (obj instanceof ComplexFunction)
+		{
+			ComplexFunction cf = (ComplexFunction) obj;
+			if  (this.toString() == cf.toString())
+    			return true;
+			double  i = -100;
+			while (i<100)
+			{
+				 if (this.f(i) != cf.f(i))
+					  return false;
+				   i += 0.01; 
+			}
+			return true;
+		}
+		return false;	
+			
 	}
 	
 	public void add(Monom m)
@@ -162,11 +192,17 @@ public class Monom implements function{
         }
 	public String toString() 
         {
+			String s = "";
             if (this.get_power() == 0)
-                return (df2.format(this.get_coefficient()));
-            
+            {
+                s = (df2.format(this.get_coefficient()));
+                if (this.get_coefficient()<0)
+                	s = "-" + s;
+                s = s.replace("\u200e" , "");
+                s = s.replace("--", "-");
+                return s;
+            }
                        
-            String s = "";
             
             if (this.get_coefficient() == -1)
             {
@@ -177,18 +213,21 @@ public class Monom implements function{
                 s = "X";
                 if (this.get_coefficient() != 1)
                     s = df2.format(this.get_coefficient()) + s;
+                if (this.get_coefficient()<0)
+                	s = "-" + s;
             }
             
             if (this.get_power() > 1)
-                s += "^" + Integer.toString(this.get_power());
-            
+                s += "^" + Integer.toString(this.get_power());   
+            s = s.replace("\u200e" , "");
+            s = s.replace("--", "-");
             return (s);
 	}
 	// you may (always) add other methods.
 
 	//****************** Private Methods and Data *****************
 	
-	private static DecimalFormat df2 = new DecimalFormat("#.##");
+	private static DecimalFormat df2 = new DecimalFormat("##########.###");
 	private void set_coefficient(double a){
 		this._coefficient = a;
 	}
